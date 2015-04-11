@@ -28,7 +28,7 @@ def extract_url(function_type):
 
 
 class WhitePagesPerson():
-    def __init__(self, best_name, age_range, gender, locations, names, phones, type, id):
+    def __init__(self, person_result):
         self.best_name = person_result['best_name']
         self.age_range = person_result['age_range']
         self.gender = person_result['gender']
@@ -38,36 +38,39 @@ class WhitePagesPerson():
         self.type = person_result['type']
         self.id = person_result['id']
 
-class Person():
+class PersonRequest():
     def __init__(self, name=None, first_name=None, middle_name=None, last_name=None, suffix=None, title=None,
                  street_line_1=None, street_line_2=None, city=None, postal_code=None, state_code=None,
                  country_code=None, use_historical=None, use_metro=None):
         self.name = name
         self.first_name = first_name
 
-    @staticmethod
-    def url():
+    def url(self):
         return 'https://proapi.whitepages.com/2.1/person.json?'
 
-    def whitePagesObject(self):
-        return WhitePagesPerson()
+    def whitePagesObject(self, query_dict):
+        return WhitePagesPerson(query_dict)
+
+class PhoneRequest():
+    def __init__(self, phone_number=None, response_type=None):
+        self.phone_number = phone_number
+        self.response_type = response_type
+
+    def url(self):
+        return 'https://proapi.whitepages.com/2.1/phone.json?'
+
+    def to_dict(self):
+        return vars(self)
+
+    def whitePagesObject(self, query_dict):
+        return WhitePagesPhoneNumber(query_dict)
+
 
 def person(name=None, first_name=None, middle_name=None, last_name=None, suffix=None, title=None,
            street_line_1=None, street_line_2=None, city=None, postal_code=None, state_code=None,
            country_code=None, use_historical=None, use_metro=None):
-    person_dict = {'name': name, 'first_name': first_name, 'middle_name': middle_name, 'last_name': last_name,
-                   'suffix': suffix, 'title': title, 'street_line_1': street_line_1, 'street_line_2': street_line_2,
-                   'city': city, 'postal_code': postal_code, 'state_code': state_code, 'country_code': country_code,
-                   'use_historical': use_historical, 'use_metro': use_metro}
-    url = extract_url('person')
-    url_query = url + url_encoder(person_dict)
-    person_json = return_json(url_query)
-    validate_url(person_json)
-    person_json_result = person_json['results']
-    person_result = []
-    for pr in person_json_result:
-        person_result.append(WhitePagesPerson(pr))
-    return person_result
+    return query(PersonRequest(name, first_name, middle_name, last_name, suffix, title, street_line_1, street_line_2, city,
+                        postal_code, state_code, country_code, use_historical, use_metro))
 
 
 class WhitePagesPhoneNumber():
@@ -88,10 +91,7 @@ class WhitePagesPhoneNumber():
 
 
 def phone(phone_number=None, response_type=None):
-    phone_dict = {'phone_number': phone_number, 'response_type': response_type}
-    phone_result = query(phone_dict, 'phone')
-    return phone_result
-
+    return query(PhoneRequest(phone_number, response_type))
 
 class WhitePagesBusiness():
     def __init__(self, business_result):
@@ -109,9 +109,9 @@ def business(name=None, street_line_1=None, street_line_2=None, city=None, posta
     return business_result
 
 
-def query(input_dict, function_type):
-    url = extract_url(function_type)
-    input_dict = remove_blank_fields(input_dict)
+def query(object):
+    url = object.url()
+    input_dict = remove_blank_fields(object.to_dict())
     if dictIsEmpty(input_dict):
         error_detail = 'You have not entered any valid arguments'
         raise WhitePagesError, error_detail
@@ -122,7 +122,7 @@ def query(input_dict, function_type):
     json_result = json_blob['results']
     result = []
     for pr in json_result:
-        result.append(WhitePagesBusiness(pr))
+        result.append(object.whitePagesObject(pr))
     return result
 
 def url_encoder(params):
