@@ -1,1 +1,3 @@
-__author__ = 'Michal'
+class WhitePagesError(Exception):
+    pass
+
