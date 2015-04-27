@@ -1,6 +1,6 @@
 from unittest2 import TestCase
 
-from location import WhitePagesLocation
+from whitepages.location import WhitePagesLocation
 
 
 class TestWhitePagesLocation(TestCase):

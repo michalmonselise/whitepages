@@ -1,6 +1,6 @@
 from unittest2 import TestCase
 
-from phone import WhitePagesPhoneNumber
+from whitepages.phone import WhitePagesPhoneNumber
 
 
 class TestWhitePagesPhoneNumber(TestCase):

@@ -1,10 +1,3 @@
-try:
-    import json
-except ImportError:
-    import simplejson as json
-import urllib
-import urllib2
-
 from helper import query
 from business import BusinessRequest
 from location import LocationRequest
@@ -14,7 +7,7 @@ from phone import PhoneRequest
 
 class WhitePages():
     def __init__(self, api_key):
-        self.__api_key = api_key
+        self.api_key = api_key
 
     def person(self, name=None, first_name=None, middle_name=None, last_name=None, suffix=None, title=None,
                street_line_1=None, street_line_2=None, city=None, postal_code=None, state_code=None,

@@ -1,6 +1,6 @@
 import unittest2 as unittest
 
-from person import WhitePagesPerson
+from whitepages.person import WhitePagesPerson
 
 
 class TestWhitePagesPerson(unittest.TestCase):

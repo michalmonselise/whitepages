@@ -1,6 +1,6 @@
 from unittest2 import TestCase
 
-from business import WhitePagesBusiness
+from whitepages.business import WhitePagesBusiness
 
 
 class TestWhitePagesBusiness(TestCase):

@@ -1,7 +1,4 @@
-try:
-    import json
-except ImportError:
-    import simplejson as json
+import json
 import urllib
 
 from error import WhitePagesError
@@ -24,25 +21,25 @@ def return_json(url):
 
 
 def dictIsEmpty(input_dict):
-    return bool(input_dict)
+    return not bool(input_dict)
 
 
 def remove_blank_fields(input_dict):
     return dict((k, v) for k, v in input_dict.iteritems() if v is not None)
 
 
-def add_key(request_dict, white_pages_object):
-    request_dict['api_key'] = white_pages_object.__api_key
+def add_key(white_pages_object, request_dict):
+    request_dict['api_key'] = white_pages_object.api_key
     return request_dict
 
 
-def query(request_object, white_pages_object):
+def query(white_pages_object, request_object):
     url = request_object.url()
-    input_dict = remove_blank_fields(request_object.to_dict)
+    input_dict = remove_blank_fields(request_object.to_dict())
     if dictIsEmpty(input_dict):
         error_detail = 'You have not entered any valid arguments'
         raise WhitePagesError, error_detail
-    input_dict = add_key(input_dict, white_pages_object)
+    input_dict = add_key(white_pages_object, input_dict)
     url_query = url + url_encoder(input_dict)
     json_blob = return_json(url_query)
     validate_url(json_blob)
